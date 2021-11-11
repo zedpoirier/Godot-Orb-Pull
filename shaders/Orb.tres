@@ -1,0 +1,102 @@
+[gd_resource type="VisualShader" load_steps=9 format=2]
+
+[sub_resource type="VisualShaderNodeFresnel" id=1]
+default_input_values = [ 2, false, 3, 2.0 ]
+
+[sub_resource type="VisualShaderNodeVec3Uniform" id=2]
+uniform_name = "Target"
+
+[sub_resource type="VisualShaderNodeDotProduct" id=3]
+
+[sub_resource type="VisualShaderNodeVectorOp" id=4]
+operator = 2
+
+[sub_resource type="VisualShaderNodeScalarOp" id=5]
+default_input_values = [ 0, 0.0, 1, 3.0 ]
+operator = 2
+
+[sub_resource type="VisualShaderNodeInput" id=6]
+input_name = "vertex"
+
+[sub_resource type="VisualShaderNodeInput" id=7]
+input_name = "vertex"
+
+[sub_resource type="VisualShaderNodeVectorOp" id=8]
+
+[resource]
+code = "shader_type spatial;
+render_mode diffuse_toon, specular_disabled, unshaded, shadows_disabled, ambient_light_disabled;
+
+uniform vec3 Target;
+
+
+
+void vertex() {
+// Input:23
+	vec3 n_out23p0 = VERTEX;
+
+// Input:3
+	vec3 n_out3p0 = VERTEX;
+
+// VectorUniform:10
+	vec3 n_out10p0 = Target;
+
+// DotProduct:11
+	float n_out11p0 = dot(n_out3p0, n_out10p0);
+
+// ScalarOp:16
+	float n_in16p1 = 3.00000;
+	float n_out16p0 = n_out11p0 * n_in16p1;
+
+// VectorOp:14
+	vec3 n_out14p0 = vec3(n_out16p0) * n_out10p0;
+
+// VectorOp:4
+	vec3 n_out4p0 = n_out23p0 + n_out14p0;
+
+// Output:0
+	VERTEX = n_out4p0;
+
+}
+
+void fragment() {
+// Fresnel:2
+	float n_in2p3 = 2.00000;
+	float n_out2p0 = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), n_in2p3);
+
+// Output:0
+	ALBEDO = vec3(n_out2p0);
+	ALPHA = n_out2p0;
+
+}
+
+void light() {
+// Output:0
+
+}
+"
+graph_offset = Vector2( -333.33, 150.75 )
+modes/diffuse = 4
+modes/specular = 4
+flags/ambient_light_disabled = true
+flags/shadows_disabled = true
+flags/unshaded = true
+nodes/vertex/0/position = Vector2( 500, 220 )
+nodes/vertex/3/node = SubResource( 7 )
+nodes/vertex/3/position = Vector2( -900, 40 )
+nodes/vertex/4/node = SubResource( 8 )
+nodes/vertex/4/position = Vector2( 240, 200 )
+nodes/vertex/10/node = SubResource( 2 )
+nodes/vertex/10/position = Vector2( -920, 260 )
+nodes/vertex/11/node = SubResource( 3 )
+nodes/vertex/11/position = Vector2( -700, 160 )
+nodes/vertex/14/node = SubResource( 4 )
+nodes/vertex/14/position = Vector2( 60, 220 )
+nodes/vertex/16/node = SubResource( 5 )
+nodes/vertex/16/position = Vector2( -160, 140 )
+nodes/vertex/23/node = SubResource( 6 )
+nodes/vertex/23/position = Vector2( 60, 120 )
+nodes/vertex/connections = PoolIntArray( 3, 0, 11, 0, 14, 0, 4, 1, 16, 0, 14, 0, 10, 0, 14, 1, 23, 0, 4, 0, 11, 0, 16, 0, 10, 0, 11, 1, 4, 0, 0, 0 )
+nodes/fragment/2/node = SubResource( 1 )
+nodes/fragment/2/position = Vector2( -80, 320 )
+nodes/fragment/connections = PoolIntArray( 2, 0, 0, 0, 2, 0, 0, 1 )
